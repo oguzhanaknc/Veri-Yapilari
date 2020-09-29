@@ -18,7 +18,7 @@ private:
     struct n{
         T x;
         n* next;
-
+        n* prev; //listemizde geri gitmemizi sağlayan düğüm.
     };
     typedef n node;
     node * root = (node *)malloc(sizeof(node)); //kök kutumuzu oluşturuyoruz.
@@ -26,31 +26,32 @@ private:
 public:
     // Construactor fonksyonumuzda kök elemanımızın değerlerini atıyor ve gezgin kutumuzu root'a eşitliyoruz.
     LinkedList(){
-        root->next = root;
+        root->next = NULL;
+        root->prev = NULL;
         root->x = NULL;
-        iter = root; //dairesel bağlı liste olduğu için son eleman NULL değil root'u gösterecek.
+        iter = root;
     }
     //sona veri ekleme fonksyonu. parametre olarak eklenecek veriyi alıyor.
     void ekle(T data){
         if (root->x == NULL){ //eğer daha önce veri eklenmemişse onu root'a ver diyoruz.
             root->x = data;
         }else{ //eğer veri eklenmişse
-            while (iter->next != root){ //Dairesel bağlı liste olduğu için son eleman yok. son elemanın next'i Root'a tekrar gelene kadar gezecek.
+            n* temp = iter;
+            while (iter->next != NULL){ //son elemana kadar gezgin kutumuz gezsin.
+
                 iter = iter->next;
+                temp = iter; //eleman eklemeden önce bir önceki elemanı tutuyoruz.
             }
             iter->next = (node *)malloc(sizeof(node)); //ve en sona yeni bir düğüm (kutu) oluştursun.
             iter->next->x = data; //oluşan kutuya değerleri atayalım.
-            iter->next->next = root; //Basit bağlı listelerde Null verdiğimiz yere root'u veriyoruz ki listemiz dairesel olsun.
+            iter->next->next = NULL;
+            iter->next->prev = temp; //prev bir önceki eleman oluyor.
         }
         resetIter(); // gezgin kutumuzu tekrar root'a eşitleyeylim.
     }
     //ekrana yazdırma fonksyonu parametresi yok.
     void yaz(){
-        resetIter();
-        //yazma işleminde ilk elemanı el ile yazıp iter'i root'dan farklı yapmak zorundayız.
-        cout << iter->x << endl;
-        iter = iter->next;
-        while (iter != root){ //son elemana kadar gezgin node (kutu) ilerliyor.
+        while (iter != NULL){ //son elemana kadar gezgin node (kutu) ilerliyor.
             cout << iter->x << endl; //her elemanın değerini yazdırıyor.
             iter = iter->next;
         }
@@ -60,33 +61,26 @@ public:
     void resetIter(){
         iter = root;
     }
-    //eleman silme
+    // veri silme.
     T sil(T data){
-        resetIter();
         node* temp; //geçici düğüm
         T tempData; // geçici veri
         // eğer silinecek eleman root ise;
-        if( root->x == data){
-            iter = iter->next;
-            while (iter->next != root){
-                iter = iter->next;
-            }
+        if (root->x == data){
+            // root'u temp'e al bir sonraki ile yer değiştir tempi sil.
             temp = root;
-            tempData = root->x;
             root = root->next;
-            iter->next = root;  // son elemanın next'ini yeni root ile değiştirme.
+            tempData = temp->x;
             free(temp);
+            resetIter();
             return tempData;
         }
         //veriyi bulana kadar gez.
-        if (iter->next-> x != data){
+        while (iter->next !=NULL && iter->next->x != data){
             iter = iter->next;
-            while (iter->next !=root && iter->next->x != data){
-                iter = iter->next;
-            }
         }
         //eğer silinecek değer bulunamazsa
-        if (iter->next == root){
+        if (iter->next == NULL){
             cout << "silinecek değer bulunamadı" << endl;
             resetIter();
             return  NULL;
@@ -101,8 +95,6 @@ public:
             return tempData;
         }
     }
-
-
 };
 
 
@@ -117,16 +109,17 @@ int main() {
     liste.ekle(98);
     liste.ekle(12);
     liste.ekle(182);
-    liste.ekle(136); // dairesel bağlı listeye eleman eklemek.
+    liste.ekle(99); // bağlı listeye eleman eklemek.
     liste.yaz();
-    liste.sil(9); //eleman silme
+    liste.sil(9); // veri silme fonksyonu
     // string ifadeler ile işlem yapmak
     LinkedList<char*> listeS;
     listeS.ekle("hasan");
     listeS.ekle("ahmet");
     listeS.ekle("veli");
     listeS.ekle("ali");
-    listeS.yaz(); // dairesel bağlı listeyi ekrana yazdırmak
+    listeS.yaz(); // bağlı listeyi ekrana yazdırmak
     liste.yaz();
+
     return 0;
 }
