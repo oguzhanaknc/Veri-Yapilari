@@ -45,6 +45,7 @@ public:
     }
     //ekrana yazdırma fonksyonu parametresi yok.
     void yaz(){
+        resetIter();
         //yazma işleminde ilk elemanı el ile yazıp iter'i root'dan farklı yapmak zorundayız.
         cout << iter->x << endl;
         iter = iter->next;
@@ -56,8 +57,51 @@ public:
     }
     // gezgin elemanı başa alma fonksyonu.
     void resetIter(){
-            iter = root;
+        iter = root;
     }
+    //eleman silme
+    T sil(T data){
+        resetIter();
+        node* temp; //geçici düğüm
+        T tempData; // geçici veri
+        // eğer silinecek eleman root ise;
+        if( root->x == data){
+            iter = iter->next;
+            while (iter->next != root){
+                iter = iter->next;
+            }
+            temp = root;
+            tempData = root->x;
+            root = root->next;
+            iter->next = root;  // son elemanın next'ini yeni root ile değiştirme.
+            free(temp);
+            return tempData;
+        }
+        //veriyi bulana kadar gez.
+        if (iter->next-> x != data){
+            iter = iter->next;
+            while (iter->next !=root && iter->next->x != data){
+                iter = iter->next;
+            }
+        }
+        //eğer silinecek değer bulunamazsa
+        if (iter->next == root){
+            cout << "silinecek değer bulunamadı" << endl;
+            resetIter();
+            return  NULL;
+            // bulunursa
+        }else{
+            //değeri temp'e al bir sonraki ile yer değiştir tempi sil.
+            temp = iter->next;
+            iter->next = temp->next;
+            tempData = temp->x;
+            free(temp);
+            resetIter();
+            return tempData;
+        }
+    }
+
+
 };
 
 
@@ -74,6 +118,7 @@ int main() {
     liste.ekle(182);
     liste.ekle(136); // dairesel bağlı listeye eleman eklemek.
     liste.yaz();
+    liste.sil(9); //eleman silme
     // string ifadeler ile işlem yapmak
     LinkedList<char*> listeS;
     listeS.ekle("hasan");
@@ -81,5 +126,6 @@ int main() {
     listeS.ekle("veli");
     listeS.ekle("ali");
     listeS.yaz(); // dairesel bağlı listeyi ekrana yazdırmak
+    liste.yaz();
     return 0;
 }
