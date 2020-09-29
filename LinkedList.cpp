@@ -53,7 +53,41 @@ public:
     }
     // gezgin elemanı başa alma fonksyonu.
     void resetIter(){
-            iter = root;
+        iter = root;
+    }
+    // veri silme.
+    T sil(T data){
+        node* temp; //geçici düğüm
+        T tempData; // geçici veri
+        // eğer silinecek eleman root ise;
+        if (root->x == data){
+            // root'u temp'e al bir sonraki ile yer değiştir tempi sil.
+            temp = root;
+            root = root->next;
+            tempData = temp->x;
+            free(temp);
+            resetIter();
+            return tempData;
+        }
+        //veriyi bulana kadar gez.
+        while (iter->next !=NULL && iter->next->x != data){
+            iter = iter->next;
+        }
+        //eğer silinecek değer bulunamazsa
+        if (iter->next == NULL){
+            cout << "silinecek değer bulunamadı" << endl;
+            resetIter();
+            return  NULL;
+            // bulunursa
+        }else{
+            //değeri temp'e al bir sonraki ile yer değiştir tempi sil.
+            temp = iter->next;
+            iter->next = temp->next;
+            tempData = temp->x;
+            free(temp);
+            resetIter();
+            return tempData;
+        }
     }
 };
 
@@ -69,8 +103,9 @@ int main() {
     liste.ekle(98);
     liste.ekle(12);
     liste.ekle(182);
-    liste.ekle(136); // bağlı listeye eleman eklemek.
+    liste.ekle(99); // bağlı listeye eleman eklemek.
     liste.yaz();
+    liste.sil(9); // veri silme fonksyonu
     // string ifadeler ile işlem yapmak
     LinkedList<char*> listeS;
     listeS.ekle("hasan");
@@ -78,5 +113,6 @@ int main() {
     listeS.ekle("veli");
     listeS.ekle("ali");
     listeS.yaz(); // bağlı listeyi ekrana yazdırmak
+    liste.yaz();
     return 0;
 }
