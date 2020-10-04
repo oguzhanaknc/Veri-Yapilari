@@ -60,7 +60,7 @@ public:
         iter = root;
     }
     // Pop() Son veriyi sil ve döndür.
-    T LinkedList<T>::Pop()  {
+    T Pop()  {
         resetIter(); //gezgin kutuyu sıfırla
         if (root->x == NULL){ //liste dolu mu boş mu bak.
             cout << "Boş Stack Silinemez..." << endl;
@@ -82,6 +82,10 @@ public:
 
 
     }
+    // Top() son veriyi silmeden döndür.
+    T Top(){
+        return tail->next->x;
+    }
 };
 
 
@@ -102,6 +106,7 @@ int main() {
     cout << liste.Pop() << endl; // veri silme fonksyonu
     cout << "*/*/*/*/*/*/" << endl;
     liste.yaz();
-
+    cout << "*/*/*/*/*/*/" << endl;
+    cout << liste.Top() << endl;
     return 0;
 }
